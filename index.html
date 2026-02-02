@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Forever Journey</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --gold: #fcc201;
+            --wine: #4a0404;
+            --text-color: #fff0f5;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #2b0000 0%, #000000 100%);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Emoji Rain Canvas */
+        #emoji-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .glass-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            padding: 40px 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(252, 194, 1, 0.4);
+            text-align: center;
+            width: 85%;
+            max-width: 480px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .screen { display: none; opacity: 0; transform: translateY(20px); transition: all 0.8s ease; }
+        .active { display: block; opacity: 1; transform: translateY(0); }
+
+        .cursive {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        p { font-size: 1.1rem; line-height: 1.6; font-weight: 300; }
+
+        .btn-box { margin-top: 30px; position: relative; min-height: 60px; }
+
+        .btn {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 14px 35px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .no-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            position: absolute;
+            white-space: nowrap;
+        }
+
+        #no-msg {
+            color: #ff8fa3;
+            font-size: 0.85rem;
+            margin-top: 20px;
+            font-style: italic;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="emoji-canvas"></canvas>
+
+<div class="glass-container">
+    <div class="screen active" id="s1">
+        <span class="cursive">Hey Love...</span>
+        <p>Before we go any further, I wanted to take a moment to look back at everything we've built together.</p>
+        <button class="btn" onclick="nextScreen(1)">Start Our Journey</button>
+    </div>
+
+    <div class="screen" id="s2">
+        <span class="cursive">The Beginning</span>
+        <p>Do you remember how shy we were at the start? Who would have thought that those first few conversations would lead to this beautiful life?</p>
+        <button class="btn" onclick="nextScreen(2)">I remember ❤️</button>
+    </div>
+
+    <div class="screen" id="s3">
+        <span class="cursive">Our Bond</span>
+        <p>Through every late-night talk and every shared laugh, you've become my safest place. You understand me like no one else ever could.</p>
+        <button class="btn" onclick="nextScreen(3)">And I always will</button>
+    </div>
+
+    <div class="screen" id="s4">
+        <span class="cursive">The Promise</span>
+        <p>I promise to be your biggest fan, your strongest protector, and your partner in every adventure life throws at us.</p>
+        <button class="btn" onclick="nextScreen(4)">Next...</button>
+    </div>
+
+    <div class="screen" id="s5">
+        <span class="cursive">One Last Question</span>
+        <p>Will you make me the happiest person and stay by my side forever?</p>
+        
+        <div class="btn-box">
+            <button class="btn" onclick="celebrate()">YES, FOREVER! ❤️</button>
+            <button class="btn no-btn" id="noButton" onmouseover="moveNo()" onclick="moveNo()">NO</button>
+        </div>
+        <div id="no-msg"></div>
+    </div>
+
+    <div class="screen" id="s6">
+        <span class="cursive">You're Mine!</span>
+        <p>Thank you for choosing me. I love you beyond words. Let's start our forever now! 💍❤️</p>
+    </div>
+</div>
+
+<script>
+    // --- Emoji Background Logic ---
+    const canvas = document.getElementById('emoji-canvas');
+    const ctx = canvas.getContext('2d');
+    const emojis = ['❤️','🥰','😘','😍','💕','😻','🫰','🫶','🫂','🩷','💌','🏩','💐','❤️‍🔥','💓','💜','🌹','💘'];
+    let particles = [];
+
+    function init() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    class EmojiParticle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.text = emojis[Math.floor(Math.random() * emojis.length)];
+            this.size = Math.random() * 20 + 15;
+            this.speedY = Math.random() * 1 + 0.5;
+            this.opacity = Math.random() * 0.5 + 0.2;
+        }
+        update() {
+            this.y -= this.speedY;
+            if (this.y < -30) {
+                this.y = canvas.height + 30;
+                this.x = Math.random() * canvas.width;
+            }
+        }
+        draw() {
+            ctx.globalAlpha = this.opacity;
+            ctx.font = `${this.size}px serif`;
+            ctx.fillText(this.text, this.x, this.y);
+        }
+    }
+
+    for (let i = 0; i < 40; i++) particles.push(new EmojiParticle());
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', init);
+    init(); animate();
+
+    // --- Navigation ---
+    function nextScreen(current) {
+        document.getElementById('s' + current).classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('s' + (current + 1)).classList.add('active');
+        }, 300);
+    }
+
+    // --- The Running No Button ---
+    function moveNo() {
+        const noBtn = document.getElementById('noButton');
+        const msg = document.getElementById('no-msg');
+        msg.innerText = "Hmm… I think your heart knows the right choice 💕!";
+        
+        const x = Math.random() * (window.innerWidth - 150);
+        const y = Math.random() * (window.innerHeight - 100);
+        
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = x + 'px';
+        noBtn.style.top = y + 'px';
+    }
+
+    function celebrate() {
+        document.getElementById('s5').classList.remove('active');
+        document.getElementById('s6').classList.add('active');
+    }
+</script>
+
+</body>
+</html>
